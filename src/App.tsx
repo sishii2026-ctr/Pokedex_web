@@ -1,15 +1,19 @@
 import { useState } from "react";
 import "./App.css";
-import { fetchPokemon, fetchPokemonSpecies } from "./api"; // ★
+import { fetchPokemon, fetchPokemonSpecies, fetchAbility } from "./api";
 import type { Pokemon } from "./schemas";
 import { typeNameJa } from "./type-names";
 import { statNameJa } from "./stat-names";
-import { findJapaneseName } from "./japanese-name"; // ★
+import { findJapaneseName } from "./japanese-name";
+import { toSearchKey } from "./name-lookup"; // ★
+
+type AbilityView = { name: string; isHidden: boolean }; // ★
 
 function App() {
   const [input, setInput] = useState("pikachu");
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-  const [displayName, setDisplayName] = useState(""); // ★ 表示する名前
+  const [displayName, setDisplayName] = useState("");
+  const [abilities, setAbilities] = useState<AbilityView[]>([]); // ★
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -17,11 +21,24 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const result = await fetchPokemon(input.trim());
-      // ★ 種族データは、ポケモンの「種族名」で取得する
+      // ★ 日本語名なら英語名に変換する（英語名ならそのまま）
+      const searchName = toSearchKey(input.trim());
+      const result = await fetchPokemon(searchName); // ★
       const species = await fetchPokemonSpecies(result.species.name);
+
+      // ★ 特性を同時に取得して、日本語名に変える（CLI版と同じ）
+      const abilityList = await Promise.all(
+        result.abilities.map(async (a) => {
+          const ability = await fetchAbility(a.ability.name);
+          return {
+            name: findJapaneseName(ability) ?? a.ability.name,
+            isHidden: a.is_hidden,
+          };
+        }),
+      );
+      setAbilities(abilityList); // ★
+
       setPokemon(result);
-      // ★ 日本語名がなければ、英語名を表示する
       setDisplayName(findJapaneseName(species) ?? result.name);
     } catch (e: unknown) {
       setPokemon(null);
@@ -38,7 +55,7 @@ function App() {
       <input
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="英語名 (例: pikachu)"
+        placeholder="日本語名・英語名 (例: ピカチュウ)" // ★
       />
       <button onClick={handleSearch} disabled={loading}>
         検索
@@ -48,12 +65,21 @@ function App() {
       {error && <p>エラー: {error}</p>}
       {pokemon && (
         <div>
-          <h2>{displayName}</h2> {/* ★ */}
+          <h2>{displayName}</h2>
           <p>No.{pokemon.id}</p>
           <p>
             タイプ:{" "}
             {pokemon.types.map((t) => typeNameJa(t.type.name)).join(" / ")}
           </p>
+
+          {/* ★ 特性 */}
+          <p>
+            特性:{" "}
+            {abilities
+              .map((a) => (a.isHidden ? `${a.name}（夢特性）` : a.name))
+              .join(" / ")}
+          </p>
+
           <h3>種族値</h3>
           <table className="stats">
             <tbody>
