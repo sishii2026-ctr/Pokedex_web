@@ -1,3 +1,23 @@
+# 実行方法
+
+pokedex-webに移動
+
+```bash
+cd C:\work\lesson_2026\ishii\TypeScript\pokedex-web
+```
+
+サイトを起動
+
+```bash
+npm run dev
+```
+
+サイトを終了
+
+```bash
+^C
+```
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
