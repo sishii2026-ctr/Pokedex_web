@@ -1,19 +1,30 @@
 import { useState } from "react";
 import "./App.css";
-import { fetchPokemon, fetchPokemonSpecies, fetchAbility } from "./api";
+import {
+  fetchPokemon,
+  fetchPokemonSpecies,
+  fetchAbility,
+  fetchMove,
+} from "./api";
 import type { Pokemon } from "./schemas";
 import { typeNameJa } from "./type-names";
 import { statNameJa } from "./stat-names";
 import { findJapaneseName } from "./japanese-name";
 import { toSearchKey } from "./name-lookup"; // ★
+import { pickLevelUpMoves } from "./moves"; // ★
 
 type AbilityView = { name: string; isHidden: boolean }; // ★
+
+type MoveView = { name: string; level: number }; // ★
+
+const MOVE_COUNT = 20; // ★ 表示するわざの数
 
 function App() {
   const [input, setInput] = useState("pikachu");
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [abilities, setAbilities] = useState<AbilityView[]>([]); // ★
+  const [moves, setMoves] = useState<MoveView[]>([]); // ★
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -37,6 +48,19 @@ function App() {
         }),
       );
       setAbilities(abilityList); // ★
+
+      setAbilities(abilityList);
+
+      // ★ レベルアップで覚えるわざを選び、日本語名を同時に取得する（CLI版と同じ）
+      const moveList = await Promise.all(
+        pickLevelUpMoves(result, MOVE_COUNT).map(async (m) => {
+          const move = await fetchMove(m.name);
+          return { name: findJapaneseName(move) ?? m.name, level: m.level };
+        }),
+      );
+      setMoves(moveList); // ★
+
+      setPokemon(result);
 
       setPokemon(result);
       setDisplayName(findJapaneseName(species) ?? result.name);
@@ -87,6 +111,19 @@ function App() {
                 <tr key={s.stat.name}>
                   <th>{statNameJa(s.stat.name)}</th>
                   <td>{s.base_stat}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* ★ わざ */}
+          <h3>わざ（レベルアップ）</h3>
+          <table className="stats">
+            <tbody>
+              {moves.map((m) => (
+                <tr key={m.name}>
+                  <th>Lv.{m.level}</th>
+                  <td>{m.name}</td>
                 </tr>
               ))}
             </tbody>

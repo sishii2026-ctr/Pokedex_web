@@ -199,3 +199,8 @@
   text-align: right; /* 数値の列は右ぞろえ */
   padding: 2px 0;
 }
+
+.card {
+  max-width: 900px; /* ★ 横に広がりすぎない */
+  margin: 24px auto 0; /* ★ 左右を auto にして中央に */
+}
