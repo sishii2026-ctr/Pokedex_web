@@ -201,6 +201,75 @@
 }
 
 .card {
-  max-width: 900px; /* ★ 横に広がりすぎない */
-  margin: 24px auto 0; /* ★ 左右を auto にして中央に */
+  margin-top: 24px; /* ★ 24px から変更 */
+}
+
+h1 {
+  color: rgb(250, 250, 250);
+  font-size: 32px;
+}
+
+/* ★ タイプの画像 */
+.types {
+  display: flex; /* 横に並べる */
+  justify-content: center; /* 中央ぞろえ */
+  gap: 8px; /* 画像どうしの間隔 */
+  margin: 8px 0;
+}
+
+.type-icon {
+  height: 28px; /* 高さを決めて、幅は自動にする */
+}
+
+/* ★ タイプのバッジ */
+.type-badge {
+  color: #fff;
+  padding: 2px 16px;
+  border-radius: 999px; /* 左右が丸いカプセル型にする */
+  font-size: 14px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); /* 明るい色でも読めるように影を付ける */
+}
+
+/* ★ 種族値のメーター */
+.stats .stat-bar-cell {
+  padding-left: 12px; /* 数字とメーターの間隔 */
+}
+
+.stat-bar {
+  width: 120px; /* メーター全体の長さ */
+  height: 8px;
+  background: #333; /* 灰色のレール */
+  border-radius: 4px;
+  overflow: hidden; /* 内側のバーを、角丸からはみ出させない */
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: #4caf50; /* バーの色 */
+}
+
+.abilities-label {
+  font-size: 14px;
+  color: #ccc; /* ★ opacity をやめて、明るいグレーにする */
+  margin-right: 8px; /* ★ 「特性」の文字と、バッジの間をあける */
+}
+
+.ability-badge {
+  border: 1px solid #aaa; /* ★ 枠線も少し明るく */
+  border-radius: 6px;
+  padding: 2px 12px;
+  font-size: 14px;
+  color: #fff; /* ★ バッジの文字を白にする */
+}
+
+.ability-badge.is-hidden {
+  border-style: dashed;
+}
+
+.hidden-tag {
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid #aaa; /* ★ 枠線と同じ色にそろえる */
+  font-size: 11px;
+  color: #ddd; /* ★ opacity をやめて、色で指定する */
 }

@@ -3,10 +3,12 @@ import {
   MoveSchema,
   PokemonSchema,
   PokemonSpeciesSchema,
+  TypeSchema, // ★
   type Ability,
   type Move,
   type Pokemon,
   type PokemonSpecies,
+  type TypeData, // ★
 } from "./schemas";
 
 export async function fetchPokemon(name: string): Promise<Pokemon> {
@@ -58,4 +60,15 @@ export async function fetchMove(name: string): Promise<Move> {
     );
   }
   return MoveSchema.parse(await res.json());
+}
+
+// ★ タイプデータを取得する（ポケモンのデータに入っているURLをそのまま使う）
+export async function fetchType(url: string): Promise<TypeData> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(
+      `タイプデータが見つかりませんでした: ${url} (${res.status})`,
+    );
+  }
+  return TypeSchema.parse(await res.json());
 }
