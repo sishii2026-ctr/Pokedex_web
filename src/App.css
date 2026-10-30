@@ -201,7 +201,10 @@
 }
 
 .card {
-  margin-top: 24px; /* ★ 24px から変更 */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 48px;
 }
 
 h1 {
@@ -272,4 +275,97 @@ h1 {
   border-left: 1px solid #aaa; /* ★ 枠線と同じ色にそろえる */
   font-size: 11px;
   color: #ddd; /* ★ opacity をやめて、色で指定する */
+}
+
+/* ★ ここから: レイアウト。基本はスマホ用で、PC用は一番下の @media で上書きする */
+
+.card {
+  display: grid;
+  grid-template-columns: 1fr; /* スマホ: 1列 */
+  grid-template-areas:
+    "profile"
+    "stats"
+    "moves";
+  gap: 16px;
+  margin-top: 24px;
+  padding: 0 16px 24px; /* 画面の端に、枠がくっつかないようにする */
+}
+
+.profile {
+  grid-area: profile;
+}
+.stats-panel {
+  grid-area: stats;
+}
+.moves-panel {
+  grid-area: moves;
+}
+
+.panel > h3:first-child {
+  margin-top: 0; /* 枠の一番上の見出しは、上の余白を詰める */
+}
+
+/* わざの一覧 */
+.move-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  width: fit-content; /* スマホでは、中身の幅に合わせて中央に置く */
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr; /* スマホ: 1列 */
+  gap: 6px 32px;
+}
+
+.move-list li {
+  display: flex;
+  gap: 8px;
+}
+
+.move-level {
+  min-width: 56px;
+  color: var(--accent);
+}
+
+/* ★ 画面の幅が769px以上（PC・タブレット）のときだけ当たる */
+@media (min-width: 769px) {
+  .header {
+    display: flex; /* タイトルと検索欄を横並びにする */
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+  }
+
+  .header .search {
+    margin-bottom: 0;
+  }
+
+  .card {
+    grid-template-columns: 0.8fr 1.2fr; /* ★ 左右を同じ幅（半分ずつ）にする */
+    grid-template-areas:
+      "profile stats"
+      "profile moves";
+    gap: 24px;
+    padding: 0 24px 32px;
+  }
+
+  .profile {
+    padding-left: 100px;
+    align-self: center;
+  }
+
+  .sprite {
+    width: 240px;
+    height: 240px;
+  }
+
+  .stat-bar {
+    width: 240px; /* 右の枠は広いので、メーターを長くする */
+  }
+
+  .move-list {
+    /* ★ width: auto / margin: 0 をやめて、基本のルール（中身の幅 + 中央）を使う */
+    grid-template-columns: 1fr 1fr; /* わざを2列にする */
+    column-gap: 56px; /* ★ 左の列と右の列の間隔を広げる */
+  }
 }
